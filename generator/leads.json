@@ -278,5 +278,18 @@
     "rating": null,
     "reviewCount": null,
     "mailable": true
+  },
+  {
+    "city": "Austin",
+    "hours": null,
+    "industry": "generic",
+    "name": "Speedway Market",
+    "phone": "(512) 905-3193",
+    "rating": 4.7,
+    "reviewCount": 168,
+    "slug": "speedway-market",
+    "state": "TX",
+    "street": "104 East 31st Street Unit B",
+    "zip": "78705"
   }
 ]
