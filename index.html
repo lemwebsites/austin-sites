@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Austin Website Mockups - LEMWebsites</title>
+    <meta name="robots" content="noindex">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -11,34 +12,11 @@
             background: #f5f5f5;
             padding: 40px 20px;
         }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            color: #1a1a2e;
-        }
-        .subtitle {
-            color: #666;
-            font-size: 1.1rem;
-            margin-bottom: 40px;
-        }
-        .brand {
-            color: #e94560;
-            font-weight: bold;
-        }
-        .section-header {
-            margin-top: 40px;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #e94560;
-        }
-        .section-header h2 {
-            font-size: 1.5rem;
-            color: #1a1a2e;
-        }
+        .container { max-width: 800px; margin: 0 auto; }
+        h1 { font-size: 2.5rem; margin-bottom: 10px; color: #1a1a2e; }
+        .subtitle { color: #666; font-size: 1.1rem; margin-bottom: 40px; }
+        .brand { color: #e94560; font-weight: bold; }
+        .count { color: #999; font-size: 0.95rem; margin-bottom: 24px; }
         .site-card {
             background: white;
             border-radius: 12px;
@@ -52,18 +30,9 @@
             gap: 20px;
             transition: transform 0.2s, box-shadow 0.2s;
         }
-        .site-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        }
-        .site-info h2 {
-            font-size: 1.5rem;
-            color: #1a1a2e;
-            margin-bottom: 5px;
-        }
-        .site-info p {
-            color: #666;
-        }
+        .site-card:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+        .site-info h2 { font-size: 1.5rem; color: #1a1a2e; margin-bottom: 5px; }
+        .site-info p { color: #666; }
         .tag {
             display: inline-block;
             background: #e94560;
@@ -86,49 +55,120 @@
             font-weight: 600;
             transition: all 0.2s;
         }
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(233, 69, 96, 0.3);
-        }
-        .footer {
-            margin-top: 40px;
-            text-align: center;
-            color: #999;
-        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(233, 69, 96, 0.3); }
+        .footer { margin-top: 40px; text-align: center; color: #999; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Austin Website Mockups</h1>
         <p class="subtitle">Free website demos for local businesses by <span class="brand">LEMWebsites.com</span></p>
+        <p class="count">20 demo sites</p>
 
-        <div class="section-header">
-            <h2>Real Businesses (10 Mailable)</h2>
+        <div class="site-card">
+            <div class="site-info">
+                <span class="tag">Auto Repair</span>
+                <h2>Juke Auto</h2>
+                <p>924 Shady Ln, Austin, TX 78702 &middot; (512) 385-5853</p>
+            </div>
+            <a href="juke-auto/index.html" class="btn">View Site</a>
+        </div>
+
+        <div class="site-card">
+            <div class="site-info">
+                <span class="tag">Auto Repair</span>
+                <h2>Tech One Automotive</h2>
+                <p>8601 Burnet Rd, Austin, TX 78757 &middot; (512) 690-4774</p>
+            </div>
+            <a href="tech-one-automotive/index.html" class="btn">View Site</a>
+        </div>
+
+        <div class="site-card">
+            <div class="site-info">
+                <span class="tag">Barbershop</span>
+                <h2>737 Barbershop</h2>
+                <p>403 E Ben White Blvd Unit C, Austin, TX 78741</p>
+            </div>
+            <a href="737-barbershop/index.html" class="btn">View Site</a>
+        </div>
+
+        <div class="site-card">
+            <div class="site-info">
+                <span class="tag">Barbershop</span>
+                <h2>Andi's Fade Society</h2>
+                <p>1600 E Riverside Dr Ste 101, Austin, TX 78741</p>
+            </div>
+            <a href="andis-fade-society/index.html" class="btn">View Site</a>
+        </div>
+
+        <div class="site-card">
+            <div class="site-info">
+                <span class="tag">Barbershop</span>
+                <h2>HC Blends</h2>
+                <p>1600 E Riverside Dr Suite 101, Austin, TX 78741</p>
+            </div>
+            <a href="hc-blends/index.html" class="btn">View Site</a>
+        </div>
+
+        <div class="site-card">
+            <div class="site-info">
+                <span class="tag">Barbershop</span>
+                <h2>Olde Soul Barbershop</h2>
+                <p>4646 Mueller Blvd #1049, Austin, TX 78723</p>
+            </div>
+            <a href="olde-soul-barbershop/index.html" class="btn">View Site</a>
+        </div>
+
+        <div class="site-card">
+            <div class="site-info">
+                <span class="tag">Barbershop</span>
+                <h2>Pressureblends</h2>
+                <p>9345 East Hwy 290, Austin, TX 78724</p>
+            </div>
+            <a href="pressureblends/index.html" class="btn">View Site</a>
+        </div>
+
+        <div class="site-card">
+            <div class="site-info">
+                <span class="tag">House Cleaning</span>
+                <h2>Austin's Maid Service</h2>
+                <p>8711 Burnet Rd Ste A13, Austin, TX 78757 &middot; (512) 582-2340</p>
+            </div>
+            <a href="austin-s-maid-service/index.html" class="btn">View Site</a>
+        </div>
+
+        <div class="site-card">
+            <div class="site-info">
+                <span class="tag">Dry Cleaning</span>
+                <h2>Comet Cleaners</h2>
+                <p>10601 Ranch to Market Rd 2222 Bldg A Suite B, Austin, TX 78750</p>
+            </div>
+            <a href="comet-cleaners/index.html" class="btn">View Site</a>
+        </div>
+
+        <div class="site-card">
+            <div class="site-info">
+                <span class="tag">Electrician</span>
+                <h2>Best Electrician 24/7</h2>
+                <p>7901 Centre Park Dr, Austin, TX 78754 &middot; (737) 301-5578</p>
+            </div>
+            <a href="best-electrician-247/index.html" class="btn">View Site</a>
         </div>
 
         <div class="site-card">
             <div class="site-info">
                 <span class="tag">Handyman</span>
-                <h2>Rapalo Handyman Services</h2>
-                <p>900 E Anderson Ln, Austin, TX 78754</p>
+                <h2>Avery Handyman Project</h2>
+                <p>14812 Avery Ranch Blvd, Austin, TX 78717 &middot; (512) 300-8641</p>
             </div>
-            <a href="rapalo-handyman-services/index.html" class="btn">View Site</a>
-        </div>
-
-        <div class="site-card">
-            <div class="site-info">
-                <span class="tag">Handyman</span>
-                <h2>The Handyman 512</h2>
-                <p>13601 Elm Ridge Ln, Austin, TX 78727</p>
-            </div>
-            <a href="the-handyman-512/index.html" class="btn">View Site</a>
+            <a href="avery-handyman-project/index.html" class="btn">View Site</a>
         </div>
 
         <div class="site-card">
             <div class="site-info">
                 <span class="tag">Handyman</span>
                 <h2>Best Austin Handyman and Remodeling</h2>
-                <p>6505 Willamette Dr, Austin, TX 78723</p>
+                <p>6505 Willamette Dr, Austin, TX 78723 &middot; (512) 761-7336</p>
             </div>
             <a href="best-austin-handyman-and-remodeling/index.html" class="btn">View Site</a>
         </div>
@@ -137,7 +177,7 @@
             <div class="site-info">
                 <span class="tag">Handyman</span>
                 <h2>Mr Done Right</h2>
-                <p>2235 E 6th St Ste 103, Austin, TX 78702</p>
+                <p>2235 E 6th St Ste 103, Austin, TX 78702 &middot; (512) 850-5407</p>
             </div>
             <a href="mr-done-right/index.html" class="btn">View Site</a>
         </div>
@@ -145,59 +185,68 @@
         <div class="site-card">
             <div class="site-info">
                 <span class="tag">Handyman</span>
-                <h2>Avery Handyman Project</h2>
-                <p>14812 Avery Ranch Blvd, Austin, TX 78717</p>
+                <h2>Rapalo Handyman Services</h2>
+                <p>900 E Anderson Ln, Austin, TX 78754 &middot; (512) 992-6786</p>
             </div>
-            <a href="avery-handyman-project/index.html" class="btn">View Site</a>
+            <a href="rapalo-handyman-services/index.html" class="btn">View Site</a>
         </div>
 
         <div class="site-card">
             <div class="site-info">
                 <span class="tag">Handyman</span>
                 <h2>Regal Handyman Repairs</h2>
-                <p>1779 Wells Branch Pkwy Ste 110B, Austin, TX 78728</p>
+                <p>1779 Wells Branch Pkwy Ste 110B, Austin, TX 78728 &middot; (512) 412-5719</p>
             </div>
             <a href="regal-handyman-repairs/index.html" class="btn">View Site</a>
         </div>
 
         <div class="site-card">
             <div class="site-info">
+                <span class="tag">Handyman</span>
+                <h2>The Handyman 512</h2>
+                <p>13601 Elm Ridge Ln, Austin, TX 78727 &middot; (512) 524-3909</p>
+            </div>
+            <a href="the-handyman-512/index.html" class="btn">View Site</a>
+        </div>
+
+        <div class="site-card">
+            <div class="site-info">
                 <span class="tag">Landscaping</span>
                 <h2>Cutters Landscaping</h2>
-                <p>9312 Margaret Jewel Ln, Austin, TX 78748</p>
+                <p>9312 Margaret Jewel Ln, Austin, TX 78748 &middot; (512) 560-1968</p>
             </div>
             <a href="cutters-landscaping/index.html" class="btn">View Site</a>
         </div>
 
         <div class="site-card">
             <div class="site-info">
-                <span class="tag">Auto Repair</span>
-                <h2>Tech One Automotive</h2>
-                <p>8601 Burnet Rd, Austin, TX 78757</p>
+                <span class="tag">Massage</span>
+                <h2>EveryKnot Massage</h2>
+                <p>9333 Research Blvd #280-30, Austin, TX 78759</p>
             </div>
-            <a href="tech-one-automotive/index.html" class="btn">View Site</a>
+            <a href="everyknot-massage/index.html" class="btn">View Site</a>
         </div>
 
         <div class="site-card">
             <div class="site-info">
-                <span class="tag">Auto Repair</span>
-                <h2>Juke Auto</h2>
-                <p>924 Shady Ln, Austin, TX 78702</p>
+                <span class="tag">Nails &amp; Spa</span>
+                <h2>Expert Nails And Spa</h2>
+                <p>4301 W William Cannon Dr Ste B136, Austin, TX 78749 &middot; (512) 892-6245</p>
             </div>
-            <a href="juke-auto/index.html" class="btn">View Site</a>
+            <a href="expert-nails-and-spa/index.html" class="btn">View Site</a>
         </div>
 
         <div class="site-card">
             <div class="site-info">
-                <span class="tag">Cleaning</span>
-                <h2>Austin's Maid Service</h2>
-                <p>8711 Burnet Rd Ste A13, Austin, TX 78757</p>
+                <span class="tag">Hair Salon</span>
+                <h2>Mark Yared Hair Stylist</h2>
+                <p>3016 Guadalupe St B-100, Austin, TX 78705</p>
             </div>
-            <a href="austin-s-maid-service/index.html" class="btn">View Site</a>
+            <a href="mark-yared-hair-stylist/index.html" class="btn">View Site</a>
         </div>
 
         <div class="footer">
-            <p>Built with ❤️ by LEMWebsites.com</p>
+            <p>Built by LEMWebsites.com</p>
         </div>
     </div>
 </body>

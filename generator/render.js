@@ -1,7 +1,342 @@
-:root {
-    --primary-color: #C2185B;
-    --primary-dark: #981247;
-    --secondary-color: #E91E63;
+// Renders a demo site (index.html + style.css) from a lead + industry config.
+const industries = require("./industries");
+
+const esc = (s) =>
+  String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+// Replace {city} tokens in industry copy with the lead's city.
+const t = (str, lead) => String(str).replaceAll("{city}", lead.city || "Austin");
+
+const telHref = (phone) => "tel:+1" + String(phone).replace(/\D/g, "");
+
+function fullAddress(lead) {
+  return `${lead.street}, ${lead.city}, ${lead.state} ${lead.zip}`;
+}
+
+// Hero badge: only show real, defensible data. 5+ reviews → rating + count;
+// a rating with an unknown count → rating only; nothing real → industry trust line.
+function heroBadge(lead, ind) {
+  if (lead.rating && lead.reviewCount >= 5) {
+    return `<i class="fas fa-star"></i> ${lead.rating} Rating &middot; ${lead.reviewCount} Google Reviews`;
+  }
+  if (lead.rating) {
+    return `<i class="fas fa-star"></i> ${lead.rating} Rating on Google`;
+  }
+  return `<i class="fas fa-location-dot"></i> ${esc(lead.city)}, ${esc(lead.state)} &middot; ${esc(ind.label)}`;
+}
+
+// Stats column: real numbers when we have them, honest icon cards when we don't.
+function statsBlock(lead, ind) {
+  if (lead.rating && lead.reviewCount >= 5) {
+    return `
+                <div class="why-stats">
+                    <div class="stat-card">
+                        <div class="stat-number">${lead.rating}/5</div>
+                        <div class="stat-label">Google Rating</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${lead.reviewCount}+</div>
+                        <div class="stat-label">Customer Reviews</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number"><i class="fas fa-location-dot"></i></div>
+                        <div class="stat-label">${esc(lead.city)} Local</div>
+                    </div>
+                </div>`;
+  }
+  const cards = ind.fallbackStats
+    .map(
+      (s) => `
+                    <div class="stat-card">
+                        <div class="stat-number"><i class="fas ${s.icon}"></i></div>
+                        <div class="stat-label">${esc(t(s.label, lead))}</div>
+                    </div>`
+    )
+    .join("");
+  return `
+                <div class="why-stats">${cards}
+                </div>`;
+}
+
+function renderHtml(lead, opts = {}) {
+  const ind = industries[lead.industry] || industries.generic;
+  const address = fullAddress(lead);
+  const mapQuery = encodeURIComponent(address);
+  const year = new Date().getFullYear();
+  const claimUrl = opts.claimUrl || "https://lemwebsites.com";
+  const hasPhone = Boolean(lead.phone);
+  const phoneHref = hasPhone ? telHref(lead.phone) : "#contact";
+
+  const services = ind.services
+    .map(
+      (s) => `
+                <div class="service-card">
+                    <div class="service-icon"><i class="fas ${s.icon}"></i></div>
+                    <h3>${esc(s.name)}</h3>
+                    <p>${esc(s.desc)}</p>
+                </div>`
+    )
+    .join("\n");
+
+  const trust = ind.trust
+    .map(
+      (item, i) => `
+                <div class="trust-item">
+                    <i class="fas ${["fa-check-circle", "fa-thumbs-up", "fa-map-marker-alt"][i] || "fa-check-circle"}"></i>
+                    <span>${esc(t(item, lead))}</span>
+                </div>`
+    )
+    .join("");
+
+  const features = ind.why.features
+    .map(
+      (f) => `
+                        <div class="feature-item">
+                            <div class="feature-icon"><i class="fas ${f.icon}"></i></div>
+                            <div class="feature-text">
+                                <h4>${esc(f.title)}</h4>
+                                <p>${esc(f.desc)}</p>
+                            </div>
+                        </div>`
+    )
+    .join("");
+
+  // Real Google reviews (from the Places API) win; otherwise clearly-labeled samples.
+  const hasRealReviews = Array.isArray(lead.reviews) && lead.reviews.length > 0;
+  const reviewCards = (hasRealReviews
+    ? lead.reviews.slice(0, 3).map((r) => ({ text: r.text, author: r.author, stars: r.rating || 5 }))
+    : ind.reviews.map((text) => ({ text, author: "Happy Customer", stars: 5 }))
+  )
+    .map(
+      (r) => `
+                <div class="review-card">
+                    <div class="review-stars">${"★".repeat(Math.round(r.stars))}</div>
+                    <p class="review-text">"${esc(r.text)}"</p>
+                    <div class="review-author">${esc(r.author)}</div>
+                </div>`
+    )
+    .join("\n");
+  const reviewsNote = hasRealReviews
+    ? ""
+    : `\n                <p class="reviews-note">Sample layout &mdash; your real Google reviews would appear here.</p>`;
+
+  const hours = lead.hours
+    ? String(lead.hours).split(/\r?\n/).map(esc).join("<br>")
+    : null;
+
+  const navCta = hasPhone
+    ? `<a href="${phoneHref}" class="nav-phone"><i class="fas fa-phone"></i> ${esc(lead.phone)}</a>`
+    : `<a href="#contact" class="nav-phone"><i class="fas fa-envelope"></i> Contact Us</a>`;
+
+  const heroPrimaryCta = hasPhone
+    ? `<a href="${phoneHref}" class="btn btn-primary btn-large"><i class="fas fa-phone"></i> ${esc(t(ind.hero.ctaPrimary, lead))}</a>`
+    : `<a href="#contact" class="btn btn-primary btn-large"><i class="fas fa-location-dot"></i> Visit Us Today</a>`;
+
+  const contactPhoneItem = hasPhone
+    ? `
+                        <div class="contact-item">
+                            <div class="contact-icon"><i class="fas fa-phone"></i></div>
+                            <div class="contact-text">
+                                <h4>Phone</h4>
+                                <a href="${phoneHref}">${esc(lead.phone)}</a>
+                            </div>
+                        </div>`
+    : "";
+
+  const contactHoursItem = hours
+    ? `
+                        <div class="contact-item">
+                            <div class="contact-icon"><i class="fas fa-clock"></i></div>
+                            <div class="contact-text">
+                                <h4>Hours</h4>
+                                <p>${hours}</p>
+                            </div>
+                        </div>`
+    : "";
+
+  const contactCta = hasPhone
+    ? `<a href="${phoneHref}" class="btn btn-primary btn-large btn-block"><i class="fas fa-phone"></i> ${esc(ind.contact.cta)}</a>`
+    : `<a href="https://www.google.com/maps/search/?api=1&query=${mapQuery}" target="_blank" rel="noopener" class="btn btn-primary btn-large btn-block"><i class="fas fa-directions"></i> Get Directions</a>`;
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${esc(lead.name)} | ${esc(ind.label)} in ${esc(lead.city)}, ${esc(lead.state)}</title>
+    <meta name="description" content="${esc(lead.name)} — ${esc(t(ind.hero.subtitle, lead))}">
+    <meta name="robots" content="noindex">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container nav-container">
+            <div class="logo">${esc(lead.name)}</div>
+            ${navCta}
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-bg-img" style="background-image: url('${ind.heroImage}');"></div>
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+            <div class="hero-badge">${heroBadge(lead, ind)}</div>
+            <h1 class="hero-title">${esc(t(ind.hero.title, lead))}</h1>
+            <p class="hero-subtitle">${esc(t(ind.hero.subtitle, lead))}</p>
+            <div class="hero-cta">
+                ${heroPrimaryCta}
+                <a href="#services" class="btn btn-outline">${esc(t(ind.hero.ctaSecondary, lead))}</a>
+            </div>
+            <div class="hero-trust">${trust}
+            </div>
+        </div>
+    </section>
+
+    <!-- Services -->
+    <section class="services" id="services">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Our Services</span>
+                <h2>What We Do Best</h2>
+                <p class="section-subtitle">${esc(t(ind.servicesIntro, lead))}</p>
+            </div>
+            <div class="services-grid">${services}
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us -->
+    <section class="why-us">
+        <div class="container">
+            <div class="why-grid">
+                <div class="why-content">
+                    <span class="section-label">Why Choose Us</span>
+                    <h2>${esc(t(ind.why.heading, lead))}</h2>
+                    <p>${esc(t(ind.why.text, lead))}</p>
+                    <div class="why-features">${features}
+                    </div>
+                </div>${statsBlock(lead, ind)}
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews -->
+    <section class="reviews" id="reviews">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Testimonials</span>
+                <h2>What Customers Say</h2>${reviewsNote}
+            </div>
+            <div class="reviews-grid">${reviewCards}
+            </div>
+        </div>
+    </section>
+
+    <!-- Location & Map -->
+    <section class="location" id="location">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">Find Us</span>
+                <h2>Our Location</h2>
+                <p class="section-subtitle">${esc(address)}</p>
+            </div>
+            <div class="map-container">
+                <iframe
+                    src="https://maps.google.com/maps?q=${mapQuery}&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                    width="100%"
+                    height="400"
+                    style="border:0; border-radius: 16px;"
+                    allowfullscreen=""
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+            <div class="map-address-link">
+                <a href="https://www.google.com/maps/search/?api=1&query=${mapQuery}" target="_blank" rel="noopener" class="btn btn-outline-dark">
+                    <i class="fas fa-directions"></i> Get Directions
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="contact" id="contact">
+        <div class="container">
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <span class="section-label">Contact Us</span>
+                    <h2>${esc(t(ind.contact.heading, lead))}</h2>
+                    <p>We'd love to hear from you. Reach out or stop by — we're right here in ${esc(lead.city)}.</p>
+                    <div class="contact-details">${contactPhoneItem}
+                        <div class="contact-item">
+                            <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+                            <div class="contact-text">
+                                <h4>Address</h4>
+                                <p>${esc(lead.street)}<br>${esc(lead.city)}, ${esc(lead.state)} ${esc(lead.zip)}</p>
+                            </div>
+                        </div>${contactHoursItem}
+                    </div>
+                </div>
+                <div class="contact-cta">
+                    ${contactCta}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo">${esc(lead.name)}</div>
+                    <p>${esc(t(ind.footerTagline, lead))}</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <a href="#services">Services</a>
+                    <a href="#reviews">Reviews</a>
+                    <a href="#contact">Contact</a>
+                </div>
+                <div class="footer-contact">
+                    <h4>Contact</h4>
+                    ${hasPhone ? `<a href="${phoneHref}">${esc(lead.phone)}</a>` : ""}
+                    <p>${esc(address)}</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; ${year} ${esc(lead.name)}. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Demo claim bar (owner-facing) -->
+    <div class="claim-bar" id="claimBar">
+        <div class="claim-text">
+            <strong>This is a free website demo</strong> built for ${esc(lead.name)} by LEMWebsites.
+            Like it? It's yours.
+        </div>
+        <div class="claim-actions">
+            <a href="${esc(claimUrl)}" target="_blank" rel="noopener" class="claim-btn">Claim This Website</a>
+            <button class="claim-close" onclick="document.getElementById('claimBar').style.display='none'" aria-label="Dismiss">&times;</button>
+        </div>
+    </div>
+</body>
+</html>
+`;
+}
+
+function renderCss(lead) {
+  const ind = industries[lead.industry] || industries.generic;
+  const c = ind.colors;
+  return `:root {
+    --primary-color: ${c.primary};
+    --primary-dark: ${c.primaryDark};
+    --secondary-color: ${c.secondary};
     --text-color: #1a1a2e;
     --text-light: #666;
     --bg-color: #ffffff;
@@ -831,3 +1166,7 @@ body {
 html {
     scroll-behavior: smooth;
 }
+`;
+}
+
+module.exports = { renderHtml, renderCss, industries };

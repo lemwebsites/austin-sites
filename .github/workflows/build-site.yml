@@ -1,0 +1,50 @@
+# Builds demo site(s) when the leadgen app (Base44) sends a repository_dispatch
+# event. Payload shape: { "lead": {...} } or { "leads": [{...}, ...] } — see
+# generator/add-lead.js for required fields.
+#
+# Trigger from outside:
+#   POST https://api.github.com/repos/lemwebsites/austin-sites/dispatches
+#   Authorization: Bearer <fine-grained PAT with contents:write on this repo>
+#   { "event_type": "build-site", "client_payload": { "lead": { ... } } }
+
+name: Build demo site
+
+on:
+  repository_dispatch:
+    types: [build-site]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-site
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Write payload
+        run: |
+          cat > /tmp/payload.json <<'PAYLOAD_EOF'
+          ${{ toJson(github.event.client_payload) }}
+          PAYLOAD_EOF
+
+      - name: Generate site(s)
+        run: node generator/add-lead.js /tmp/payload.json
+
+      - name: Commit and push
+        run: |
+          git config user.name "leadgen-bot"
+          git config user.email "actions@github.com"
+          git add -A
+          git diff --cached --quiet && echo "No changes" && exit 0
+          git commit -m "Add/update demo site(s) via leadgen pipeline"
+          git pull --rebase origin master
+          git push origin master
