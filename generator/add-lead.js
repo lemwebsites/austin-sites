@@ -25,6 +25,19 @@ if (!payloadPath) {
 const payload = JSON.parse(fs.readFileSync(payloadPath, "utf8"));
 const incoming = payload.leads || (payload.lead ? [payload.lead] : [payload]);
 
+// The app sends its visit-beacon endpoint with every build; persist it so
+// the generator injects the first-visit beacon into all sites.
+if (payload.beacon_url !== undefined) {
+  const configPath = path.join(__dirname, "config.json");
+  let config = {};
+  try { config = JSON.parse(fs.readFileSync(configPath, "utf8")); } catch (e) { /* new file */ }
+  if (payload.beacon_url && config.beaconUrl !== payload.beacon_url) {
+    config.beaconUrl = payload.beacon_url;
+    fs.writeFileSync(configPath, JSON.stringify(config, null, 2) + "\n");
+    console.log("Updated beacon URL in generator/config.json");
+  }
+}
+
 const leads = JSON.parse(fs.readFileSync(LEADS_PATH, "utf8"));
 let added = 0;
 let updated = 0;

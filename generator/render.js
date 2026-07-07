@@ -58,8 +58,53 @@ function statsBlock(lead, ind) {
                 </div>`;
 }
 
+// Custom categories (industry === 'generic' with a categoryLabel) get the
+// generic template semi-tailored: their own label in the tag, title, and
+// hero, e.g. "Your Trusted Contractor in Austin".
+function effectiveIndustry(lead) {
+  const base = industries[lead.industry] || industries.generic;
+  if (base !== industries.generic || !lead.categoryLabel || lead.categoryLabel === "generic") return base;
+  const label = String(lead.categoryLabel)
+    .replace(/-/g, " ")
+    .replace(/(^|\s)\S/g, (c) => c.toUpperCase());
+  return {
+    ...base,
+    label,
+    tag: label,
+    hero: { ...base.hero, title: `Your Trusted ${label} in {city}` },
+    footerTagline: `Your trusted local ${label.toLowerCase()} in {city}, TX.`,
+  };
+}
+
+// First-visit beacon: pings the leadgen app so the lead lights up "visited".
+// Configured via generator/config.json (written by the build workflow from
+// the app's visit_beacon_url setting); absent config = no beacon, no errors.
+function beaconScript(lead) {
+  let beaconUrl = null;
+  try {
+    beaconUrl = require("./config.json").beaconUrl || null;
+  } catch (e) { /* no config yet */ }
+  if (!beaconUrl) return "";
+  return `
+    <script>
+    (function () {
+      try {
+        var src = new URLSearchParams(location.search).get('s') || 'direct';
+        if (src === 'me') return;
+        if (localStorage.getItem('lem_v')) return;
+        localStorage.setItem('lem_v', '1');
+        var payload = JSON.stringify({ slug: '${lead.slug}', src: src });
+        var url = '${beaconUrl}';
+        if (!(navigator.sendBeacon && navigator.sendBeacon(url, payload))) {
+          fetch(url, { method: 'POST', mode: 'no-cors', body: payload });
+        }
+      } catch (e) { /* never break the page */ }
+    })();
+    </script>`;
+}
+
 function renderHtml(lead, opts = {}) {
-  const ind = industries[lead.industry] || industries.generic;
+  const ind = effectiveIndustry(lead);
   const address = fullAddress(lead);
   const mapQuery = encodeURIComponent(address);
   const year = new Date().getFullYear();
@@ -325,13 +370,14 @@ function renderHtml(lead, opts = {}) {
             <button class="claim-close" onclick="document.getElementById('claimBar').style.display='none'" aria-label="Dismiss">&times;</button>
         </div>
     </div>
+${beaconScript(lead)}
 </body>
 </html>
 `;
 }
 
 function renderCss(lead) {
-  const ind = industries[lead.industry] || industries.generic;
+  const ind = effectiveIndustry(lead);
   const c = ind.colors;
   return `:root {
     --primary-color: ${c.primary};
