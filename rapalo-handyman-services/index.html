@@ -280,5 +280,20 @@
         </div>
     </div>
 
+    <script>
+    (function () {
+      try {
+        var src = new URLSearchParams(location.search).get('s') || 'direct';
+        if (src === 'me') return;
+        if (localStorage.getItem('lem_v')) return;
+        localStorage.setItem('lem_v', '1');
+        var payload = JSON.stringify({ slug: 'rapalo-handyman-services', src: src });
+        var url = 'https://base44-dispatcher-production.base44.workers.dev/run/trackVisit';
+        if (!(navigator.sendBeacon && navigator.sendBeacon(url, payload))) {
+          fetch(url, { method: 'POST', mode: 'no-cors', body: payload });
+        }
+      } catch (e) { /* never break the page */ }
+    })();
+    </script>
 </body>
 </html>
