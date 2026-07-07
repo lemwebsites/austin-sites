@@ -91,8 +91,9 @@ function beaconScript(lead) {
       try {
         var src = new URLSearchParams(location.search).get('s') || 'direct';
         if (src === 'me') return;
-        if (localStorage.getItem('lem_v')) return;
-        localStorage.setItem('lem_v', '1');
+        var key = 'lem_v_${lead.slug}';
+        if (localStorage.getItem(key)) return;
+        localStorage.setItem(key, '1');
         var payload = JSON.stringify({ slug: '${lead.slug}', src: src });
         var url = '${beaconUrl}';
         if (!(navigator.sendBeacon && navigator.sendBeacon(url, payload))) {

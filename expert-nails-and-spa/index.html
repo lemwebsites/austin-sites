@@ -285,8 +285,9 @@
       try {
         var src = new URLSearchParams(location.search).get('s') || 'direct';
         if (src === 'me') return;
-        if (localStorage.getItem('lem_v')) return;
-        localStorage.setItem('lem_v', '1');
+        var key = 'lem_v_expert-nails-and-spa';
+        if (localStorage.getItem(key)) return;
+        localStorage.setItem(key, '1');
         var payload = JSON.stringify({ slug: 'expert-nails-and-spa', src: src });
         var url = 'https://base44.app/api/apps/6a4bf51622548ad8e22b9459/functions/trackVisit';
         if (!(navigator.sendBeacon && navigator.sendBeacon(url, payload))) {
