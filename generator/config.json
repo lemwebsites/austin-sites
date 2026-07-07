@@ -1,3 +1,3 @@
 {
-  "beaconUrl": "https://base44-dispatcher-production.base44.workers.dev/run/trackVisit"
+  "beaconUrl": "https://base44.app/api/apps/6a4bf51622548ad8e22b9459/functions/trackVisit"
 }

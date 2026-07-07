@@ -288,7 +288,7 @@
         if (localStorage.getItem('lem_v')) return;
         localStorage.setItem('lem_v', '1');
         var payload = JSON.stringify({ slug: 'the-handyman-512', src: src });
-        var url = 'https://base44-dispatcher-production.base44.workers.dev/run/trackVisit';
+        var url = 'https://base44.app/api/apps/6a4bf51622548ad8e22b9459/functions/trackVisit';
         if (!(navigator.sendBeacon && navigator.sendBeacon(url, payload))) {
           fetch(url, { method: 'POST', mode: 'no-cors', body: payload });
         }
